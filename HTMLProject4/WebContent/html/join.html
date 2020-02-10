@@ -9,6 +9,17 @@
 <body>
    <center>
      <h1>일반회원 가입신청</h1>
+     <!-- 데이터 전송  => form태그  -->
+     <!-- 
+          1. method
+              = GET => 보내는 데이터를 URL뒤에 첨부
+                (default) => 단순한 데이터 전송 (페이지 번호,영화번호
+                             단순한 검색)
+              = POST => 내부 네트워크를 통해서 전송 
+                         보안,로그인..(ID,Pwd),데이터가 많은 경우
+          2. action
+      -->
+     <form method="GET" action="join_ok.html">
      <table id="table_content" width=700>
        <tr>
          <th width=20% align=right>일반회원 아이디</th>
@@ -112,6 +123,7 @@
          </td>
        </tr>
      </table>
+     </form>
    </center>
 </body>
 </html>
