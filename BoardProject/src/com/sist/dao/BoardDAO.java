@@ -109,6 +109,42 @@ public class BoardDAO {
     	}
     	return list;
     }
+    
+    public ArrayList<BoardVO> boardFindData(String fs,String ss)
+    {
+    	ArrayList<BoardVO> list=
+    			new ArrayList<BoardVO>();
+    	try
+    	{
+    		getConnection();
+    		String sql="SELECT no,subject,name,regdate,hit "
+    				  +"FROM board "
+    				  +"WHERE "+fs+" LIKE '%"+ss+"%'";
+    		ps=conn.prepareStatement(sql);
+    		ResultSet rs=ps.executeQuery();
+    		
+    		while(rs.next())
+    		{
+    			    BoardVO vo=new BoardVO();
+    				vo.setNo(rs.getInt(1));
+    				vo.setSubject(rs.getString(2));
+    				vo.setName(rs.getString(3));
+    				vo.setRegdate(rs.getDate(4));
+    				vo.setHit(rs.getInt(5));
+    				list.add(vo);
+    		}
+    		rs.close();
+    		
+    	}catch(Exception ex)
+    	{
+    		System.out.println(ex.getMessage());
+    	}
+    	finally
+    	{
+    		disConnection();
+    	}
+    	return list;
+    }
     public int boardTotalPage()
     {
     	int total=0;
@@ -181,8 +217,151 @@ public class BoardDAO {
     	return vo;
     }
     // 추가하기 => INSERT
+    public void boardInsert(BoardVO vo)
+    {
+    	try
+    	{
+    		getConnection();
+    		String sql="INSERT INTO board(no,name,subject,content,pwd) "
+    				  +"VALUES((SELECT NVL(MAX(no)+1,1) FROM board),?,?,?,?)";
+    		ps=conn.prepareStatement(sql);
+    		// 실행전에 => ?에 값을 채운다
+    		ps.setString(1, vo.getName());
+    		ps.setString(2, vo.getSubject());
+    		ps.setString(3, vo.getContent());
+    		ps.setString(4, vo.getPwd());
+    		// 실행
+    		ps.executeUpdate();// commit()포함
+    	}catch(Exception ex)
+    	{
+    		System.out.println(ex.getMessage());
+    	}
+    	finally
+    	{
+    		disConnection();
+    	}
+    }
     // 수정하기 => UPDATE
+    public BoardVO boardUpdateData(int no)
+    {
+    	BoardVO vo=new BoardVO();
+    	try
+    	{
+    		getConnection();
+    		
+    		String sql="SELECT no,name,subject,content "
+    		   +"FROM board "
+    		   +"WHERE no=?";
+    		
+    		ps=conn.prepareStatement(sql);
+    		ps.setInt(1, no);
+    		
+    		ResultSet rs=ps.executeQuery();
+    		rs.next();
+    		
+    		vo.setNo(rs.getInt(1));
+    		vo.setName(rs.getString(2));
+    		vo.setSubject(rs.getString(3));
+    		vo.setContent(rs.getString(4));
+    		
+    		rs.close();
+    		
+    	}catch(Exception ex)
+    	{
+    		System.out.println(ex.getMessage());
+    	}
+    	finally
+    	{
+    		disConnection();
+    	}
+    	return vo;
+    }
+    // 실제 수정 => UPDATE~SET
+    public boolean boardUpdate(BoardVO vo)
+    {
+    	boolean bCheck=false;
+    	try
+    	{
+    		getConnection();
+    		String sql="SELECT pwd FROM board "
+    				  +"WHERE no=?";
+    		ps=conn.prepareStatement(sql);
+    		ps.setInt(1, vo.getNo());
+    		ResultSet rs=ps.executeQuery();
+    		rs.next();
+    		String db_pwd=rs.getString(1);
+    		rs.close();
+    		
+    		if(db_pwd.equals(vo.getPwd()))
+    		{
+    			bCheck=true;
+    			sql="UPDATE board SET "
+    			   +"name=?,subject=?,content=? "
+    			   +"WHERE no=?";
+    			ps=conn.prepareStatement(sql);
+    			// ?
+    			ps.setString(1,vo.getName());
+    			ps.setString(2,vo.getSubject());
+    			ps.setString(3,vo.getContent());
+    			ps.setInt(4, vo.getNo());
+    			
+    			// 실행
+    			ps.executeUpdate();
+    		}
+    		else
+    		{
+    			bCheck=false;
+    		}
+    	}catch(Exception ex)
+    	{
+    		System.out.println(ex.getMessage());
+    	}
+    	finally
+    	{
+    		disConnection();
+    	}
+    	return bCheck;
+    }
     // 삭제하기  => DELETE
+    public boolean boardDelete(int no,String pwd)
+    {
+    	boolean bCheck=false;
+    	try
+    	{
+    		getConnection();
+    		String sql="SELECT pwd FROM board "
+    				  +"WHERE no=?";
+    		ps=conn.prepareStatement(sql);
+    		ps.setInt(1, no);
+    		ResultSet rs=ps.executeQuery();
+    		rs.next();
+    		String db_pwd=rs.getString(1);
+    		rs.close();
+    		
+    		if(db_pwd.equals(pwd))
+    		{
+    			bCheck=true;
+    			sql="DELETE FROM board "
+    			   +"WHERE no=?";
+    			ps=conn.prepareStatement(sql);
+    			ps.setInt(1, no);
+    			// 실행
+    			ps.executeUpdate();
+    		}
+    		else
+    		{
+    			bCheck=false;
+    		}
+    	}catch(Exception ex)
+    	{
+    		System.out.println(ex.getMessage());
+    	}
+    	finally
+    	{
+    		disConnection();
+    	}
+    	return bCheck;
+    }
     // 찾기  => SELECT ~ LIKE
 }
 

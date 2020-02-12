@@ -1,24 +1,47 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<%
-		out.println("<html>");
-		out.println("<head>");
-		out.println("<link rel=stylesheet href=\"css/table.css\">");
-		out.println("</head>");
-		out.println("<body>");
-		out.println("<center>");
-		out.println("<h1>자유게시판</h1>");
-		out.println("<table id=\"table_content\" width=700>");
-		out.println("<tr>");
-		out.println("<th width=10% >번호</th>");
-		out.println("<th width=45% >제목</th>");
-		out.println("<th width=15% >이름</th>");
-		out.println("<th width=20% >작성일</th>");
-		out.println("<th width=10% >조회수</th>");
-		out.println("</tr>");
-		out.println("</table>");
-		out.println("</center>");
-		out.println("</body>");
-		out.println("</html>");
-%>
+<html>
+<head>
+<link rel=stylesheet href="css/table.css">
+</head>
+<body>
+<center>
+<h1>글쓰기</h1>
+<form method=post action=BoardInsert>
+<table id="table_content" width=500>
+<tr>
+<th width=15% align=right>이름</th>
+<td width=85%>
+<input type=text name=name size=15 required>
+</td>
+</tr>
+<tr>
+<th width=15% align=right>제목</th>
+<td width=85%>
+<input type=text name=subject size=50 required>
+</td>
+</tr>
+<tr>
+<th width=15% align=right valign=top>내용</th>
+<td width=85%>
+<textarea rows=8 cols=55 name=content required></textarea>
+</td>
+</tr>
+<tr>
+<th width=15% align=right>비밀번호</th>
+<td width=85%>
+<input type=password name=pwd size=10 required>
+</td>
+</tr>
+<tr>
+<td colspan=2 align=center>
+<input type=submit value=글쓰기>
+<input type=button value=취소 onclick="javascript:history.back()">
+</td>
+</tr>
+</table>
+</form>
+</center>
+</body>
+</html>
